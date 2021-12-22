@@ -8,9 +8,8 @@ import pickle
 import sys
 import time
 from argparse import ArgumentParser
-
 import selenium.webdriver as webdriver
-
+from selenium_stealth import stealth
 from google_alerts import GoogleAlerts
 
 PY2 = False
@@ -117,11 +116,21 @@ def main():
     if args.cmd == 'seed':
         config['password'] = obfuscate(str(config['password']), 'fetch')
         ga = GoogleAlerts(config['email'], config['password'])
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_experimental_option("excludeSwitches", ['enable-automation'])
-        caps = webdriver.DesiredCapabilities.CHROME.copy()
-        caps['acceptInsecureCerts'] = True
-        with contextlib.closing(webdriver.Chrome(args.driver, options=chrome_options)) as driver:
+        options = webdriver.ChromeOptions()
+        options.add_argument("start-maximized")
+        # options.add_argument("--headless")
+        options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        options.add_experimental_option('useAutomationExtension', False)
+        with contextlib.closing(webdriver.Chrome(args.driver, options=options)) as driver:
+            stealth(driver,
+                user_agent='DN',
+                languages=["en-US", "en"],
+                vendor="Google Inc.",
+                platform="Win32",
+                webgl_vendor="Intel Inc.",
+                renderer="Intel Iris OpenGL Engine",
+                fix_hairline=True,
+            )       # Before Login, using stealth
             driver.get('https://stackoverflow.com/users/signup?ssrc=head&returnurl=%2fusers%2fstory%2fcurrent%27')
             time.sleep(3)
             driver.find_element_by_xpath('//*[@id="openid-buttons"]/button[1]').click()
