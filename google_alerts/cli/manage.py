@@ -135,6 +135,7 @@ def main():
             time.sleep(3)
             driver.find_element_by_xpath('//*[@id="openid-buttons"]/button[1]').click()
             driver.find_element_by_xpath('//input[@type="email"]').send_keys(config['email'])
+            time.sleep(15)
             driver.find_element_by_xpath('//*[@id="identifierNext"]').click()
             time.sleep(3)
             driver.find_element_by_xpath('//input[@type="password"]').send_keys(config['password'])
